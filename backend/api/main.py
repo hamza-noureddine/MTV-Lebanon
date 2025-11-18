@@ -30,9 +30,7 @@ def home():
     return {"status": "API Running"}
 
 
-# -----------------------------
-# 🟦 FIXED: SORT BY REAL DATETIME
-# -----------------------------
+
 def parse_datetime(article):
     """Combine date + time → real datetime object."""
     dt_str = f"{article.date} {article.time}".strip()
@@ -40,7 +38,7 @@ def parse_datetime(article):
     try:
         return datetime.strptime(dt_str, "%d %b %Y %I:%M %p")
     except:
-        return datetime.min  # fallback if parsing fails
+        return datetime.min 
 
 
 @app.get("/articles")
