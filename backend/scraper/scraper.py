@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
-
+from api.database import SessionLocal
+from api.models import Article
 
 
 def fetch_article_list(limit=50):
@@ -46,4 +47,20 @@ def parse_article_page(url):
 
 
 def run_scraper():
-  db =
+  db = SessionLocal()
+  items = fetch_article_list()
+  for item in items:
+      url = "https://www.mtv.com.lb" + item["Url"]
+      exists = db.query(Article).filter_by(url=url).first()
+      if exists:
+          continue
+        
+      parsed = parse_article_page(url)
+      article = Article(**parsed)
+      db.add(article)
+      db.commit()
+  db.close()
+  
+if __name__ == "__main__":
+    run_scraper()
+      
