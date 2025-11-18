@@ -19,20 +19,21 @@ response = requests.request("GET", url, headers=headers)
 
 data = response.json()
 
-articles = data.get("articles", [])
-
-print(f"Retrieved {len(articles)} articles:")
-
+articles = data
 
 for article in articles:
-    article_id = article.get("id")
-    category = article.get("type")
-    subcategory = article.get("category") or "Local"
-    
-    # iterate through each article's url
-    article_url = f"https://www.mtv.com.lb/en/news/{subcategory}/{article_id}"
-    
+  
+    article_id = article.get("articleid")
+    title = article.get("title")
+    media_url = article.get("MediaUrl")
+    category = article.get("articletype")
+    url_path = article.get("Url")  # already a full path
+
+    full_url = f"https://www.mtv.com.lb{url_path}"
+
     print("ID:", article_id)
-    print("URL:", article_url)
-    
-    
+    print("Category:", category)
+    print("URL:", full_url)
+    print("Title:", title)
+    print("Image:", media_url)
+    print("-" * 60)
