@@ -1,48 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MTV Lebanon News</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <title>MTV Lebanon News</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .article {
+            margin-bottom: 40px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 20px;
+        }
+
+        img, video {
+            width: 100%;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
 
-  <h1>MTV Lebanon – Latest News</h1>
-  <div id="articles-container" class="articles"></div>
+    <h1>📺 MTV Lebanon News</h1>
 
-  <script>
-    async function loadArticles() {
-      const res = await fetch("https://mtv-lebanon.onrender.com/articles");
-      const articles = await res.json();
+    <!-- BUTTON TO TRIGGER SCRAPER -->
+    <button onclick="fetchData()">🔄 Fetch Latest Articles</button>
 
-      const container = document.getElementById("articles-container");
+    <div id="status"></div>
+    <div id="articles"></div>
 
-      articles.forEach(a => {
-        const div = document.createElement("div");
-        div.className = "article-card";
+    <script>
+        const API_BASE = "https://mtv-lebanon.onrender.com";
 
-        div.innerHTML = `
-          <h2>${a.title}</h2>
-          <p>${a.date} ${a.time} – <b>${a.category}</b></p>
+        // Fetch articles from backend
+        async function loadArticles() {
+            const res = await fetch(`${API_BASE}/articles/`);
+            const data = await res.json();
+            
+            const container = document.getElementById("articles");
+            container.innerHTML = "";
 
-          ${
-            a.is_video
-              ? `<video controls width="100%" poster="${a.video_poster}" src="${a.video_url}"></video>`
-              : `<img src="${a.image}" width="100%"/>`
-          }
+            data.forEach(a => {
+                container.innerHTML += `
+                    <div class="article">
+                        <h2>${a.title}</h2>
+                        <p>${a.date} • ${a.time} • ${a.category}</p>
 
-          <p>${a.text.substring(0, 200)}...</p>
+                        ${a.is_video
+                            ? `<video controls poster="${a.video_poster}" src="${a.video_url}"></video>`
+                            : `<img src="${a.image}" />`
+                        }
 
-          <a href="article.html?id=${a.id}" class="btn">Read More</a>
-        `;
+                        <p>${a.text.substring(0, 200)}...</p>
+                        <a href="${a.url}" target="_blank">Read Full Article</a>
+                    </div>
+                `;
+            });
+        }
 
-        container.appendChild(div);
-      });
-    }
+        // Trigger scraper
+        async function fetchData() {
+            document.getElementById("status").innerHTML = "⏳ Fetching latest articles...";
+            
+            const res = await fetch(`${API_BASE}/scrape`, { method: "POST" });
+            const data = await res.json();
 
-    loadArticles();
-  </script>
+            document.getElementById("status").innerHTML = "✅ Done updating!";
+            
+            loadArticles();
+        }
+
+        // Load articles automatically
+        loadArticles();
+    </script>
 
 </body>
 </html>

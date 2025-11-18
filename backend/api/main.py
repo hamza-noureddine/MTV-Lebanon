@@ -65,3 +65,26 @@ app.add_middleware(
 def scrape_now():
     run_scraper()
     return {"status": "scraped"}
+
+
+
+
+origins = [
+    "https://mtv-lebanon.vercel.app",
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.post("/scrape")
+def trigger_scrape():
+    run_scraper()
+    return {"status": "scraped"}
+
