@@ -80,12 +80,15 @@
         }
 
         async function fetchData() {
-            document.getElementById("status").innerHTML = "Fetching latest articles...";
-            
-            await fetch(`${API_BASE}/scrape`, { method: "POST" });
-            
-            document.getElementById("status").innerHTML = "Done updating!";
-            loadArticles();
+    document.getElementById("status").innerHTML = "Checking for new articles...";
+
+    const res = await fetch(`${API_BASE}/scrape`, { method: "POST" });
+    const data = await res.json();
+
+    // Always reload the articles list after scraping
+    await loadArticles();
+
+    document.getElementById("status").innerHTML = data.message;
         }
 
         loadArticles();
