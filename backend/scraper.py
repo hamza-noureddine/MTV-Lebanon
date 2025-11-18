@@ -63,7 +63,9 @@ def run_scraper():
         new_count: number of new articles inserted
     """
     db = SessionLocal()
-    items = fetch_article_list()
+
+    items = list(reversed(fetch_article_list()))
+
 
     new_articles = 0
 
