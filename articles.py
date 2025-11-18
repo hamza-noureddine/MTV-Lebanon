@@ -22,3 +22,17 @@ data = response.json()
 articles = data.get("articles", [])
 
 print(f"Retrieved {len(articles)} articles:")
+
+
+for article in articles:
+    article_id = article.get("id")
+    category = article.get("type")
+    subcategory = article.get("category") or "Local"
+    
+    # iterate through each article's url
+    article_url = f"https://www.mtv.com.lb/en/news/{subcategory}/{article_id}"
+    
+    print("ID:", article_id)
+    print("URL:", article_url)
+    
+    
