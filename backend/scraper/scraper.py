@@ -29,4 +29,21 @@ def parse_article_page(url):
         "video_poster": None,
         "video_url": None
     }
-  
+  video = soup.select_one("div.video-player-container")
+  if video:
+      result["is_video"] = True
+      result["video_poster"] = video.get("poster")
+      source = video.find("source", {"type": "application/x-mpegURL"})
+      if source:
+          result["video_url"] = source.get("src")
+          
+  else:
+    img = soup.select_one(".articles-header-image img")
+    if img:
+        result["image"] = img.get("src")
+
+    return result
+
+
+def run_scraper():
+  db =
