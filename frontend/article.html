@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Article</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <a href="index.html" class="back">← Back to Homepage</a>
+
+  <div id="article" class="article-full"></div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+
+    async function loadArticle() {
+      const res = await fetch(`https://mtv-lebanon.onrender.com/articles/${id}`);
+      const a = await res.json();
+
+      const page = document.getElementById("article");
+
+      page.innerHTML = `
+        <h1>${a.title}</h1>
+        <p>${a.date} ${a.time} – <b>${a.category}</b></p>
+
+        ${
+          a.is_video
+            ? `<video controls width="100%" poster="${a.video_poster}" src="${a.video_url}"></video>`
+            : `<img src="${a.image}" width="100%"/>`
+        }
+
+        <p style="margin-top:20px; white-space:pre-line">${a.text}</p>
+      `;
+    }
+
+    loadArticle();
+  </script>
+
+</body>
+</html>
