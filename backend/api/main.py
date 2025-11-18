@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from fastapi.middleware.cors import CORSMiddleware
+
 from api.database import SessionLocal, engine
 from api.models import Article, Base
 from scraper import run_scraper
@@ -8,8 +10,10 @@ from scraper import run_scraper
 app = FastAPI()
 
 # Create DB tables
+# Create DB tables
 Base.metadata.create_all(bind=engine)
 
+# CORS
 # CORS
 origins = [
     "https://mtv-lebanon.vercel.app",
@@ -40,3 +44,4 @@ def list_articles():
 def trigger_scrape():
     run_scraper()
     return {"status": "scraped"}
+

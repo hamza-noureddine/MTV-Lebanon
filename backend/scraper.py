@@ -125,3 +125,4 @@ def run_scraper(pages=5, batch_size=30):
 
 if __name__ == "__main__":
     run_scraper(pages=3)
+
