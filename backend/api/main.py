@@ -28,9 +28,7 @@ app.add_middleware(
 def home():
     return {"status": "API Running"}
 
-# -----------------------------
-# LIST ARTICLES
-# -----------------------------
+
 @app.get("/articles")
 def list_articles():
     db = SessionLocal()
@@ -38,9 +36,6 @@ def list_articles():
     db.close()
     return articles
 
-# -----------------------------
-# SCRAPE (POST)
-# -----------------------------
 @app.post("/scrape")
 def trigger_scrape():
     run_scraper()
