@@ -1,15 +1,16 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
 from api.database import SessionLocal, engine
 from api.models import Article, Base
 from scraper import run_scraper
-from fastapi.middleware.cors import CORSMiddleware
-
 
 app = FastAPI()
 
-# create tables if not exist
+# Create DB tables
 Base.metadata.create_all(bind=engine)
 
+# CORS
 origins = [
     "https://mtv-lebanon.vercel.app",
     "http://localhost:3000",
@@ -22,25 +23,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 @app.get("/")
 def home():
     return {"status": "API Running"}
 
-origins = [
-    "https://mtv-lebanon.vercel.app",
-    "http://localhost:3000",
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
+# -----------------------------
+# LIST ARTICLES
+# -----------------------------
 @app.get("/articles")
 def list_articles():
     db = SessionLocal()
@@ -48,43 +38,10 @@ def list_articles():
     db.close()
     return articles
 
-origins = [
-    "https://mtv-lebanon.vercel.app",
-    "http://localhost:3000",
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-@app.get("/scrape")
-def scrape_now():
-    run_scraper()
-    return {"status": "scraped"}
-
-
-
-
-origins = [
-    "https://mtv-lebanon.vercel.app",
-    "http://localhost:3000",
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-
+# -----------------------------
+# SCRAPE (POST)
+# -----------------------------
 @app.post("/scrape")
 def trigger_scrape():
     run_scraper()
     return {"status": "scraped"}
-
