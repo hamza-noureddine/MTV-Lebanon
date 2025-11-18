@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from datetime import datetime
 
 from api.database import SessionLocal, engine
 from api.models import Article, Base
@@ -10,10 +11,9 @@ app = FastAPI()
 # Create DB tables
 Base.metadata.create_all(bind=engine)
 
-# CORS settings
+# CORS CONFIG
 origins = [
     "https://mtv-lebanon.vercel.app",
-    "https://mtv-lebanon-fmh54tpoa-hamzas-projects-da37ea56.vercel.app",
     "http://localhost:3000",
 ]
 
@@ -29,20 +29,33 @@ app.add_middleware(
 def home():
     return {"status": "API Running"}
 
+
+# -----------------------------
+# 🟦 FIXED: SORT BY REAL DATETIME
+# -----------------------------
+def parse_datetime(article):
+    """Combine date + time → real datetime object."""
+    dt_str = f"{article.date} {article.time}".strip()
+
+    try:
+        return datetime.strptime(dt_str, "%d %b %Y %I:%M %p")
+    except:
+        return datetime.min  # fallback if parsing fails
+
+
 @app.get("/articles")
 def list_articles():
     db = SessionLocal()
-    articles = db.query(Article).order_by(Article.id.desc()).all()
+    articles = db.query(Article).all()
     db.close()
-    return articles
+
+    # Sort newest → oldest
+    sorted_articles = sorted(articles, key=parse_datetime, reverse=True)
+
+    return sorted_articles
 
 
 @app.post("/scrape")
 def trigger_scrape():
-    new_count = run_scraper()
-    
-    if new_count == 0:
-        return {"status": "ok", "message": "No new articles found."}
-
-    return {"status": "ok", "message": f"Fetched {new_count} new articles."}
-
+    run_scraper()
+    return {"status": "scraped"}
