@@ -9,7 +9,7 @@ class Article(Base):
     id = Column(Integer, primary_key=True, index=True)
     article_id = Column(Integer, unique=True, index=True)   # <── Add this
     title = Column(Text)
-    url = Column(Text)
+    url = Column(Text, unique=True, nullable=False)
     date = Column(String)
     time = Column(String)
     text = Column(Text)
