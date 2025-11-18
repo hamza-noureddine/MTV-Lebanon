@@ -43,8 +43,7 @@
 
     <h1>📺 MTV Lebanon News</h1>
 
-    <!-- BUTTON TO TRIGGER SCRAPER -->
-    <button onclick="fetchData()">🔄 Fetch Latest Articles</button>
+    <button onclick="fetchData()">Fetch Latest Articles</button>
 
     <div id="status"></div>
     <div id="articles"></div>
@@ -52,45 +51,43 @@
     <script>
         const API_BASE = "https://mtv-lebanon.onrender.com";
 
-        // Fetch articles from backend
         async function loadArticles() {
             const res = await fetch(`${API_BASE}/articles/`);
             const data = await res.json();
-            
+
             const container = document.getElementById("articles");
             container.innerHTML = "";
 
+            // NEWEST FIRST
             data.forEach(a => {
-                container.innerHTML += `
-                    <div class="article">
-                        <h2>${a.title}</h2>
-                        <p>${a.date} • ${a.time} • ${a.category}</p>
+                container.prepend(
+                    document.createRange().createContextualFragment(`
+                        <div class="article">
+                            <h2>${a.title}</h2>
+                            <p>${a.date} • ${a.time} • ${a.category}</p>
 
-                        ${a.is_video
-                            ? `<video controls poster="${a.video_poster}" src="${a.video_url}"></video>`
-                            : `<img src="${a.image}" />`
-                        }
+                            ${a.is_video
+                                ? `<video controls poster="${a.video_poster}" src="${a.video_url}"></video>`
+                                : `<img src="${a.image}" />`
+                            }
 
-                        <p>${a.text.substring(0, 200)}...</p>
-                        <a href="${a.url}" target="_blank">Read Full Article</a>
-                    </div>
-                `;
+                            <p>${a.text.replace(/\n/g, "<br>")}</p>
+                            <a href="${a.url}" target="_blank">Read Full Article</a>
+                        </div>
+                    `)
+                );
             });
         }
 
-        // Trigger scraper
         async function fetchData() {
-            document.getElementById("status").innerHTML = "⏳ Fetching latest articles...";
+            document.getElementById("status").innerHTML = "Fetching latest articles...";
             
-            const res = await fetch(`${API_BASE}/scrape`, { method: "POST" });
-            const data = await res.json();
-
-            document.getElementById("status").innerHTML = "✅ Done updating!";
+            await fetch(`${API_BASE}/scrape`, { method: "POST" });
             
+            document.getElementById("status").innerHTML = "Done updating!";
             loadArticles();
         }
 
-        // Load articles automatically
         loadArticles();
     </script>
 
