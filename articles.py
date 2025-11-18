@@ -4,7 +4,7 @@ import requests
 end=30
 url = f"https://www.mtv.com.lb/en/api/articles?start=0&end={end}&type="
 
-payload = {}
+
 headers = {
   'sec-ch-ua-platform': '"Windows"',
   'Referer': 'https://www.mtv.com.lb/en',
@@ -14,6 +14,11 @@ headers = {
   'sec-ch-ua-mobile': '?0'
 }
 
-response = requests.request("GET", url, headers=headers, data=payload)
+response = requests.request("GET", url, headers=headers)
 
-print(response.text)
+
+data = response.json()
+
+articles = data.get("articles", [])
+
+print(f"Retrieved {len(articles)} articles:")
