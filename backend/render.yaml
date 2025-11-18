@@ -1,9 +1,1 @@
-services
-  - type web
-    name mtv-backend
-    env docker
-    plan free
-    autoDeploy true
-    envVars
-      - key DATABASE_URL
-        sync false
+
