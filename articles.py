@@ -1,6 +1,8 @@
 import requests
 
-url = "https://www.mtv.com.lb/en/api/reels"
+
+end=30
+url = f"https://www.mtv.com.lb/en/api/articles?start=0&end={end}&type="
 
 payload = {}
 headers = {
@@ -15,4 +17,3 @@ headers = {
 response = requests.request("GET", url, headers=headers, data=payload)
 
 print(response.text)
-
