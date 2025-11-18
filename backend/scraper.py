@@ -115,7 +115,7 @@ def run_scraper():
         db.add(article)
         db.commit()
         saved += 1
-        print(f"✅ Saved: {parsed['title']}")
+        print(f"Saved: {parsed['title']}")
 
     print(f"\n Done — {saved} new articles added.")
     db.close()
