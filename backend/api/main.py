@@ -36,9 +36,13 @@ def list_articles():
     db.close()
     return articles
 
-# Allow GET & POST for triggering scraper
-@app.api_route("/scrape", methods=["GET", "POST"])
-@app.api_route("/scrape/", methods=["GET", "POST"])
+
+@app.post("/scrape")
 def trigger_scrape():
-    run_scraper()
-    return {"status": "scraped"}
+    new_count = run_scraper()
+    
+    if new_count == 0:
+        return {"status": "ok", "message": "No new articles found."}
+
+    return {"status": "ok", "message": f"Fetched {new_count} new articles."}
+

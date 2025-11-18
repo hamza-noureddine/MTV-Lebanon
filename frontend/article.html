@@ -13,31 +13,56 @@
   <div id="article" class="article-full"></div>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get("id");
 
-    async function loadArticle() {
-      const res = await fetch(`https://mtv-lebanon.onrender.com/articles/${id}`);
-      const a = await res.json();
+    const API_BASE = "https://mtv-lebanon.onrender.com";
 
-      const page = document.getElementById("article");
+    // Load all saved articles (newest first)
+    async function loadArticles() {
+        const res = await fetch(`${API_BASE}/articles`);
+        const data = await res.json();
 
-      page.innerHTML = `
-        <h1>${a.title}</h1>
-        <p>${a.date} ${a.time} – <b>${a.category}</b></p>
+        const container = document.getElementById("articles");
+        container.innerHTML = "";
 
-        ${
-          a.is_video
-            ? `<video controls width="100%" poster="${a.video_poster}" src="${a.video_url}"></video>`
-            : `<img src="${a.image}" width="100%"/>`
-        }
+        data.forEach(a => {
+            container.innerHTML += `
+                <div class="article">
+                    <h2>${a.title}</h2>
+                    <p>${a.date} • ${a.time} • ${a.category}</p>
 
-        <p style="margin-top:20px; white-space:pre-line">${a.text}</p>
-      `;
+                    ${
+                      a.is_video
+                        ? `<video controls poster="${a.video_poster}" src="${a.video_url}"></video>`
+                        : `<img src="${a.image}" />`
+                    }
+
+                    <p>${a.text.substring(0, 200)}...</p>
+                    <a href="${a.url}" target="_blank">Read Full Article</a>
+                </div>
+            `;
+        });
     }
 
-    loadArticle();
-  </script>
+    // Fetch new articles only if they don't exist
+    async function fetchData() {
+        document.getElementById("status").innerHTML = "Checking for new articles...";
+
+        const res = await fetch(`${API_BASE}/scrape`, { method: "POST" });
+        const data = await res.json();
+
+        document.getElementById("status").innerHTML = data.message;
+
+        // Only reload UI if new articles were added
+        if (!data.message.includes("No new articles")) {
+            loadArticles();
+        }
+    }
+
+    // Auto-load on first visit
+    loadArticles();
+</script>
+
+  
 
 </body>
 </html>
